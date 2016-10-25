@@ -5,6 +5,8 @@ import time
 
 board_width = 8
 board_height = 8
+black_expanded_nodes = 0
+white_expanded_nodes = 0
 
 
 def print_board(black, white):
@@ -220,6 +222,8 @@ def alphabeta_max_value_white(white, black, depth, alpha, beta):
     # print('max_value_black', depth)
 
     v = -sys.maxint - 1
+    global white_expanded_nodes
+
     for a in white_actions(white, black):
         # do action on copies
         tmp_white = dict(white)
@@ -235,6 +239,7 @@ def alphabeta_max_value_white(white, black, depth, alpha, beta):
             return sys.maxint
 
         v = max(v, alphabeta_min_value_white(tmp_white, tmp_black, depth+1, alpha, beta))
+        white_expanded_nodes += 1
 
         if v >= beta:
             return v
@@ -253,6 +258,8 @@ def alphabeta_min_value_white(white, black, depth, alpha, beta):
     
 
     v = sys.maxint
+    global white_expanded_nodes
+
     for a in black_actions(black, white):
         # do action on copies
         tmp_black = dict(black)
@@ -268,11 +275,12 @@ def alphabeta_min_value_white(white, black, depth, alpha, beta):
             return -sys.maxint-1
 
         v = min(v, alphabeta_max_value_white(tmp_white, tmp_black, depth+1, alpha, beta))
+        white_expanded_nodes += 1
 
         if v <= alpha:
             return v
         beta = min(beta, v)
-                
+
     return v
             
 # white's turn
@@ -280,7 +288,8 @@ def alphabeta_min_value_white(white, black, depth, alpha, beta):
 def alphabeta_minimax_white_decision(white, black):
     v = -sys.maxint - 1
     action = (-1,(-1,-1))
-    print('minimax_white_decision')
+    # print('minimax_white_decision')
+    global white_expanded_nodes
 
     # who plays first
     for a in white_actions(white, black):
@@ -297,6 +306,7 @@ def alphabeta_minimax_white_decision(white, black):
 
         # resursion with copies
         max_value = max(v, alphabeta_min_value_white(tmp_white, tmp_black, 1, -sys.maxint - 1, sys.maxint))
+        white_expanded_nodes += 1
 
         # if white wins
         if terminal_white_test(tmp_white, tmp_black):
@@ -324,6 +334,8 @@ def alphabeta_max_value_black(black, white, depth, alpha, beta):
     # print('max_value_black', depth)
 
     v = -sys.maxint - 1
+    global black_expanded_nodes
+
     for a in black_actions(black, white):
         # do action on copies
         tmp_black = dict(black)
@@ -339,6 +351,7 @@ def alphabeta_max_value_black(black, white, depth, alpha, beta):
             return sys.maxint
 
         v = max(v, alphabeta_min_value_black(tmp_black, tmp_white, depth+1, alpha, beta))
+        black_expanded_nodes += 1
 
         if v >= beta:
             return v
@@ -358,6 +371,8 @@ def alphabeta_min_value_black(black, white, depth, alpha, beta):
     # print('min_value_black', depth)
 
     v = sys.maxint
+    global black_expanded_nodes
+
     for a in white_actions(white, black):
         # do action on copies
         tmp_white = dict(white)
@@ -373,6 +388,7 @@ def alphabeta_min_value_black(black, white, depth, alpha, beta):
             return -sys.maxint-1
 
         v = min(v, alphabeta_max_value_black(tmp_black, tmp_white, depth+1, alpha, beta))
+        black_expanded_nodes += 1
 
         if v <= alpha:
             return v
@@ -387,7 +403,8 @@ def alphabeta_minimax_black_decision(black, white):
     # smallest int value
     v = -sys.maxint - 1
     action = (-1,(-1,-1))
-    print('minimax_black_decision')
+    # print('minimax_black_decision')
+    global black_expanded_nodes
 
     # who plays first
     for a in black_actions(black, white):
@@ -404,6 +421,7 @@ def alphabeta_minimax_black_decision(black, white):
 
         # resursion with copies
         max_value = max(v, alphabeta_min_value_black(tmp_black, tmp_white, 1, -sys.maxint - 1, sys.maxint))
+        black_expanded_nodes += 1
 
         # if white wins
         if terminal_black_test(tmp_black, tmp_white):
@@ -441,6 +459,8 @@ def max_value_white(white, black, depth):
     # print('max_value_black', depth)
 
     v = -sys.maxint - 1
+    global white_expanded_nodes
+
     for a in white_actions(white, black):
         # do action on copies
         tmp_white = dict(white)
@@ -456,6 +476,8 @@ def max_value_white(white, black, depth):
             return sys.maxint
 
         v = max(v, min_value_white(tmp_white, tmp_black, depth+1))
+        white_expanded_nodes += 1
+
     return v
 
 # black's turn
@@ -469,6 +491,8 @@ def min_value_white(white, black, depth):
     
 
     v = sys.maxint
+    global white_expanded_nodes
+
     for a in black_actions(black, white):
         # do action on copies
         tmp_black = dict(black)
@@ -484,6 +508,8 @@ def min_value_white(white, black, depth):
             return -sys.maxint-1
 
         v = min(v, max_value_white(tmp_white, tmp_black, depth+1))
+        white_expanded_nodes += 1
+
     return v
             
 # white's turn
@@ -491,7 +517,8 @@ def min_value_white(white, black, depth):
 def minimax_white_decision(white, black):
     v = -sys.maxint - 1
     action = (-1,(-1,-1))
-    print('minimax_white_decision')
+    # print('minimax_white_decision')
+    global white_expanded_nodes
 
     # who plays first
     for a in white_actions(white, black):
@@ -508,6 +535,7 @@ def minimax_white_decision(white, black):
 
         # resursion with copies
         max_value = max(v, min_value_white(tmp_white, tmp_black, 1))
+        white_expanded_nodes += 1
 
         # if white wins
         if terminal_white_test(tmp_white, tmp_black):
@@ -539,6 +567,8 @@ def max_value_black(black, white, depth):
     # print('max_value_black', depth)
 
     v = -sys.maxint - 1
+    global black_expanded_nodes
+
     for a in black_actions(black, white):
         # do action on copies
         tmp_black = dict(black)
@@ -555,6 +585,8 @@ def max_value_black(black, white, depth):
 
 
         v = max(v, min_value_black(tmp_black, tmp_white, depth+1))
+        black_expanded_nodes += 1
+
     return v
 
 
@@ -569,6 +601,8 @@ def min_value_black(black, white, depth):
     # print('min_value_black', depth)
 
     v = sys.maxint
+    global black_expanded_nodes
+
     for a in white_actions(white, black):
         # do action on copies
         tmp_white = dict(white)
@@ -584,6 +618,8 @@ def min_value_black(black, white, depth):
             return -sys.maxint-1
 
         v = min(v, max_value_black(tmp_black, tmp_white, depth+1))
+        black_expanded_nodes += 1
+
     return v
             
 
@@ -593,7 +629,8 @@ def minimax_black_decision(black, white):
     # smallest int value
     v = -sys.maxint - 1
     action = (-1,(-1,-1))
-    print('minimax_black_decision')
+    # print('minimax_black_decision')
+    global black_expanded_nodes
 
     # who plays first
     for a in black_actions(black, white):
@@ -610,6 +647,7 @@ def minimax_black_decision(black, white):
 
         # resursion with copies
         max_value = max(v, min_value_black(tmp_black, tmp_white, 1))
+        black_expanded_nodes += 1
 
         # if white wins
         if terminal_black_test(tmp_black, tmp_white):
@@ -634,8 +672,12 @@ def minimax_black_decision(black, white):
 
 
 
-
+game_rounds = 1
 def main():
+    
+    start_time = time.time()
+
+
     # black goes first, goes down
     # white goes second, goes up
     
@@ -660,13 +702,13 @@ def main():
     # for i in white:
     #     print(i)
 
-    print_board(black, white)
-    print()
-
+    # print_board(black, white)
+    # print()
+    global game_rounds
     actions = []
-    game_rounds = 1
+    
     while True:
-        print('game_rounds', game_rounds)        
+        # print('game_rounds', game_rounds)        
 
         # white[0] = (white[0][0]-1, white[0][1] )
         # if terminal_white_test(black, white):
@@ -681,13 +723,14 @@ def main():
             black[action[0]] = action[1]
             white = dict((k, v) for k, v in white.iteritems() if v != action[1])
             
-            print('black final action:', action)
-            print_board(black, white)
-            print()
+            # print('black final action:', action)
+            # print_board(black, white)
+            # print()
 
-            if terminal_black_test(black, white):
-                print('black wins!')
+            if terminal_black_test(black, white):                
+                print('final state of the board:')
                 print_board(black, white)
+                print('black wins!')
                 break
         
         else:
@@ -699,13 +742,14 @@ def main():
             white[action[0]] = action[1]
             black = dict((k, v) for k, v in black.iteritems() if v != action[1])
 
-            print('white final action:', action)
-            print_board(black, white)
-            print()
+            # print('white final action:', action)
+            # print_board(black, white)
+            # print()
 
             if terminal_white_test(white, black):
-                print('white wins!')
+                print('final state of the board:')
                 print_board(black, white)
+                print('white wins!')
                 break
 
         game_rounds += 1
@@ -716,13 +760,27 @@ def main():
         #     print('game_rounds', game_rounds)
         #     break
 
+    interval = (time.time() - start_time)
+    # print("--- %s seconds ---" % interval)
 
-
-
+    # print('game_rounds', game_rounds)
+    print()
+    print('game tree nodes expanded by black:', black_expanded_nodes)
+    print('game tree nodes expanded by white:', white_expanded_nodes)
+    print()
+    print('average number of nodes expanded per move:', (black_expanded_nodes+white_expanded_nodes)/game_rounds)
+    print('average seconds to make a move:', interval / game_rounds)
+    print()
+    print('opponent workers captured by black:', (16 - len(white)) )
+    print('opponent workers captured by white:', (16 - len(black)) )
+    print('total number of moves required till the win:', game_rounds)
 
 
 if __name__ == '__main__':
-    start_time = time.time()
     main()
-    print("--- %s seconds ---" % (time.time() - start_time))
+
+
+
+
+
 
